@@ -22,9 +22,9 @@ let rec subset a b =
 (*Question 2*)
 let rec equal_sets a b =
 	match a with
-	[] -> match b with
+	[] -> (match b with
 	      [] -> true
-	      | t -> false
+	      | _ -> false)
         | h::t -> if ( contains h b ) then (equal_sets t (delete_el h b))
 		  else false
 	
