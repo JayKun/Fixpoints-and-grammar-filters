@@ -47,16 +47,13 @@ let rec computed_fixed_point eq f x =
 	else computed_fixed_point eq f (f x)
 
 (*Question 7*)
-let rec periodic_point_helper eq f p x =
-	match p with 
-		0 -> if eq (f x) x then x
-		     else None
-		| _ -> periodic_point_helper eq f (p-1) (f x) 
+let rec periodic_point_helper f p x =
+	if p=0 then x
+	else periodic_point_helper f (p-1) (f x) 
  
 let rec computed_periodic_point eq f p x =
-	match (periodic_point_helper eq f p x) with 
-		None -> computed_periodic_point eq f p (f x) 
-		|_ -> x
+	if eq (periodic_point_helper f p x) x then x 
+	else computed_periodic_point eq f p (f x) 
 
 (*Question 8*)
 let rec while_away s p x =
