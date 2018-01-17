@@ -42,3 +42,37 @@ let rec set_diff a b =
 		  else h::(set_diff t b)
 
 (*Question 6*)
+let rec computed_fixed_point eq f x =
+	if eq (f x) x then x
+	else computed_fixed_point eq f (f x)
+
+(*Question 7*)
+let rec periodic_point_helper eq f p x =
+	match p with 
+		0 -> if eq (f x) x then x
+		     else None
+		| _ -> periodic_point_helper eq f (p-1) (f x) 
+ 
+let rec computed_periodic_point eq f p x =
+	match (periodic_point_helper eq f p x) with 
+		None -> computed_periodic_point eq f p (f x) 
+		|_ -> x
+
+(*Question 8*)
+let rec while_away s p x =
+	if (p x) then x::(while_away s p (p x) )
+	else []
+
+(*Question 9*)
+let rec rle_decode_helper n v =
+	if n = 0 then []
+	else v::rle_decode_helper (n-1) v
+
+let rec rle_decode lp =
+	match lp with
+	[] -> []
+	| (n, v)::t -> (rle_decode_helper n v)::(rle_decode t) 
+
+(*Question 10*)
+(*let rec filter_blind_alleys g = *)
+	
