@@ -21,13 +21,7 @@ let rec subset a b =
 
 (*Question 2*)
 let rec equal_sets a b =
-	match a with
-	[] -> (match b with
-	      [] -> true
-	      | _ -> false)
-        | h::t -> if ( contains h b ) then (equal_sets t (delete_el h b))
-		  else false
-	
+	subset a b && subset b a
 	
 (*Question 3*)
 let rec set_union a b = 
@@ -44,7 +38,7 @@ let rec set_intersection a b =
 let rec set_diff a b =
 	match a with
 	[] -> []
-	| h::t -> if (contains b h) then (set_diff t b)
+	| h::t -> if (contains h b) then (set_diff t b)
 		  else h::(set_diff t b)
 
 (*Question 6*)
