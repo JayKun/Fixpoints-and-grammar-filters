@@ -85,13 +85,13 @@ let rec is_terminal symbol =
 let rec add_safe_symbols lhs rule list =
 	match rule with
 	[] -> lhs::list
-	| h::t -> if is_terminal h then check_rhs_terminal lhs t list
+	| h::t -> if (is_terminal h) then add_safe_symbols lhs t list
 		  else list
 
 let rec populate_list rules list =
 	match rules with
 	[] -> list
-	| rule::t ->(populate_list t (add_safe_symbols (fst rule) (snd rule) list )
+	| rule::t -> populate_list t (add_safe_symbols (fst rule) (snd rule) list )
 (* list now contains all N that terminates *)
 
 (* check whether symbol is in list of approved Ns*)
@@ -104,7 +104,7 @@ let rec rule_is_safe rule list =
 let rec blind_alley_helper exprs list =
 	match exprs with
 	[] -> []
-	| h::t-> if (rule _is_safe (snd h) list ) then ((fst h) (snd h))::(blind_alley_helper t list)
+	| h::t-> if (rule_is_safe (snd h) list ) then ((fst h), (snd h))::(blind_alley_helper t list)
 		  else blind_alley_helper t list 
 
 let rec filter_blind_alleys g =
