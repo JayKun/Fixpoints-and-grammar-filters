@@ -72,4 +72,46 @@ let rec rle_decode lp =
 
 (*Question 10*)
 (*let rec filter_blind_alleys g = *)
+type ('nonterminal, 'terminal) symbol =
+  | N of 'nonterminal
+  | T of 'terminal
+
+(*check whether a non-terminal lhs maps to itself*)
+let rec check_rhs_for_lhs expr list =
+	match expr with
+	T expr -> true
+	| N expr -> if contains expr list then true
+		  else false
+
+(* check whether symbol is a terminal or is in list of approved list*)
+let rec symbol_is_safe sym list =
+	match sym with 
+	T s -> true
+	| _ -> contains sym list
+
+let rec rule_is_safe rule list =
+	match rule with
+	[]-> true
+	| h::t -> if symbol_is_safe h list then rule_is_safe t list
+		  else false
+ 
+let rec blind_alley_helper rules list =
+	match rules with
+	[] -> []
+	| h::t-> if (rule _is_safe (snd h) list ) then h::(blind_alley_helper t list)
+		  else blind_alley_helper t list 
+
+let rec populate_list rules list =
+	match rules with
+	[] -> list
+	| h::t -> if rule_is_safe (snd h) list then populate_list t (fst h)::list
+
+		  else populate_list t list
+let rec filter_blind_alleys g =
+	match g with
+	(k, v) -> let expr  = k in
+		  let rules = v in
+	rules = populate_list rules []
+	rules = blind_alley_helper rules []
+	(expr, rules)
 	
