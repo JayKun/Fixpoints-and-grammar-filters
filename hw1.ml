@@ -77,41 +77,40 @@ type ('nonterminal, 'terminal) symbol =
   | T of 'terminal
 
 (*check whether a non-terminal lhs maps to itself*)
-let rec check_rhs_for_lhs expr list =
-	match expr with
-	T expr -> true
-	| N expr -> if contains expr list then true
-		  else false
-
-(* check whether symbol is a terminal or is in list of approved list*)
-let rec symbol_is_safe sym list =
-	match sym with 
-	T s -> true
-	| _ -> contains sym list
-
-let rec rule_is_safe rule list =
+let rec is_terminal symbol =
+	match symbol with
+	T symbol -> true
+	| _ -> false
+(* rule = (lhs, expr) lhs = symbol; expr = [T'3; N'Num] *)
+let rec add_safe_symbols lhs rule list =
 	match rule with
-	[]-> true
-	| h::t -> if symbol_is_safe h list then rule_is_safe t list
-		  else false
- 
-let rec blind_alley_helper rules list =
-	match rules with
-	[] -> []
-	| h::t-> if (rule _is_safe (snd h) list ) then h::(blind_alley_helper t list)
-		  else blind_alley_helper t list 
+	[] -> lhs::list
+	| h::t -> if is_terminal h then check_rhs_terminal lhs t list
+		  else list
 
 let rec populate_list rules list =
 	match rules with
 	[] -> list
-	| h::t -> if rule_is_safe (snd h) list then populate_list t (fst h)::list
+	| rule::t ->(populate_list t (add_safe_symbols (fst rule) (snd rule) list )
+(* list now contains all N that terminates *)
 
-		  else populate_list t list
+(* check whether symbol is in list of approved Ns*)
+let rec rule_is_safe rule list =
+	match rule with
+	[] -> true 
+	| h::t -> if contains h list then rule_is_safe t list
+		  else false
+ 
+let rec blind_alley_helper exprs list =
+	match exprs with
+	[] -> []
+	| h::t-> if (rule _is_safe (snd h) list ) then ((fst h) (snd h))::(blind_alley_helper t list)
+		  else blind_alley_helper t list 
+
 let rec filter_blind_alleys g =
 	match g with
-	(k, v) -> let expr  = k in
-		  let rules = v in
-	rules = populate_list rules []
-	rules = blind_alley_helper rules []
-	(expr, rules)
-	
+	(k, v) -> let lhs_expr  = k in
+		  let rhs_exprs = v in
+	let safe_list = populate_list rhs_exprs [] in
+	let filtered = blind_alley_helper rhs_exprs safe_list in
+	(lhs_expr, filtered)
