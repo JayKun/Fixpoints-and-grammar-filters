@@ -36,3 +36,65 @@ let my_set_intersection_test3 =
   not (equal_sets (set_intersection [1;2;2;3;4;3] [3;2;1;1;1;4]) [2;3;1])
 let my_set_intersection_test4 =
   equal_sets (set_intersection [] [1;2;2;1]) []
+
+(*set_diff*)
+let set_diff_test0 = equal_sets (set_diff [1;3;3;1] [1;4;3;1]) []
+let set_diff_test1 = equal_sets (set_diff [4;3;1;1;3;5] [1;3]) [4;5]
+let set_diff_test2 = equal_sets (set_diff [4;3;1;1;3] []) [1;3;4]
+let set_diff_test3 = equal_sets (set_diff [] [4;3;1]) []
+let set_diff_test4 = equal_sets (set_diff [] []) []
+
+(*computed_fixed_point*)
+let computed_fixed_point_test0 =computed_fixed_point (=) (fun x -> x*x - 2*x) 2 = 0
+let computed_fixed_point_test1 =computed_fixed_point (=) (fun x -> x *. 2.) 1. = infinity
+let computed_fixed_point_test2 =computed_fixed_point (=) sqrt 10. = 1.
+let computed_fixed_point_test3 =((computed_fixed_point (fun x y -> abs_float (x -. y) < 1.)
+			 	(fun x -> x /. 2.) 10.) = 1.25)
+let computed_fixed_point_test4 =computed_fixed_point (=) (fun x -> match x with []->[]
+							| h::t -> t) [1;1;1;1;1;1;1] = []
+
+(*computed_periodic_point*)
+let computed_periodic_point_test0 = computed_periodic_point (=) (fun x -> x / 2) 0 (-1) = -1
+let computed_periodic_point_test1 = computed_periodic_point (=) (fun x -> -1*x) 2 1 = 1
+
+(*while_away*)
+let my_while_away_test0 = while_away (( + ) 2) ((>) 5) 1 = [1;3]
+let my_while_away_test1 = while_away (fun x -> 1::x) (fun x -> List.length x < 3) [1] = [[1];[1;1]]
+let my_while_away_test2 = while_away (fun x -> (fst x, (snd x) + 1)) (fun x -> (snd x) < 3 ) (1,1) = [1,1;1,2]
+
+(*rle_decode*)
+let my_rle_decode_test0 = rle_decode [] = []
+let my_rle_decode_test1 = rle_decode [1,1; 0,1; 3,2] = [1;2;2;2]
+let my_rle_decode_test2 = rle_decode [0,0;0,0] = []
+let my_rle_decode_test3 = rle_decode [1,1] = [1]
+let my_rle_decode_test4 = rle_decode [1,'t';1,'i';1,'r';1,'e';1,'d'] = ['t';'i';'r';'e';'d']
+
+(*filter_blind_alley*)
+type awksub_nonterminals =
+  | Why | Am | I | So | Tired
+
+let test_rules =
+   [Why, [T"("; N Why; T")"];
+    Why, [N Am];
+    Why, [N Why; N I; N So];
+    Why, [N I];
+    Why, [N I; N Tired];
+    Am, [T"$"; N Tired];
+    I, [N I];
+    I, [N Am];
+    So, [T"+"];
+    So, [T"-"];
+    Tired, [T"0"];
+    Tired, [T"1"];
+    Tired, [T"2"];
+    Tired, [T"3"];
+    Tired, [T"4"];
+    Tired, [T"5"];
+    Tired, [T"6"];
+    Tired, [T"7"];
+    Tired, [T"8"];
+    Tired, [T"9"]]
+
+let test_g = (I, test_rules)
+
+filter_blind_alley test_g

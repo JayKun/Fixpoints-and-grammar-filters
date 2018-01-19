@@ -63,12 +63,13 @@ let rec while_away s p x =
 (*Question 9*)
 let rec rle_decode_helper n v =
 	if n = 0 then []
-	else v::rle_decode_helper (n-1) v
+	else (v::(rle_decode_helper (n-1) v))
 
 let rec rle_decode lp =
 	match lp with
 	[] -> []
-	| (n, v)::t -> (rle_decode_helper n v)::(rle_decode t) 
+	| (n, v)::t -> if n=0 then (rle_decode t)
+		       else v::(rle_decode ((n-1, v)::t) )
 
 (*Question 10*)
 (*let rec filter_blind_alleys g = *)
