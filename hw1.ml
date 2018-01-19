@@ -57,7 +57,7 @@ let rec computed_periodic_point eq f p x =
 
 (*Question 8*)
 let rec while_away s p x =
-	if (p x) then x::(while_away s p (p x) )
+	if (p x) then x::(while_away s p (s x) )
 	else []
 
 (*Question 9*)
