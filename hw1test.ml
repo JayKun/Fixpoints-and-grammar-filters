@@ -71,7 +71,7 @@ let my_rle_decode_test4 = rle_decode [1,'t';1,'i';1,'r';1,'e';1,'d'] = ['t';'i';
 
 (*filter_blind_alley*)
 type awksub_nonterminals =
-  | Why | Am | I | So | Tired
+| Why | Am | I | So | Tired
 
 let test_rules =
    [Why, [T"("; N Why; T")"];
@@ -83,18 +83,23 @@ let test_rules =
     I, [N I];
     I, [N Am];
     So, [T"+"];
-    So, [T"-"];
     Tired, [T"0"];
-    Tired, [T"1"];
-    Tired, [T"2"];
-    Tired, [T"3"];
-    Tired, [T"4"];
-    Tired, [T"5"];
-    Tired, [T"6"];
-    Tired, [T"7"];
-    Tired, [T"8"];
-    Tired, [T"9"]]
+  ]
+let test_rules1 =
+   [Why, [T"("; N Why; T")"];
+    Why, [N Am];
+    Why, [N Why; N I; N So];
+    Why, [N I];
+    Why, [N I; N Tired];
+    Am, [T"$"; N Am];
+    I, [N I];
+    I, [N Am];
+    So, [T"+"];
+    Tired, [T"0"];
+  ]
 
-let test_g = (I, test_rules)
 
-filter_blind_alley test_g
+let g = Why, test_rules
+let g1 = Why, test_rules1
+let filter_blind_alleys_test0 = filter_blind_alleys g = g
+let filter_blind_alleys_test1 = filter_blind_alleys g1 = (Why, [(So, [T "+"]); (Tired, [T "0"])])
