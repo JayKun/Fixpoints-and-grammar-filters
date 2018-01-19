@@ -31,7 +31,7 @@ let rec set_union a b =
 let rec set_intersection a b =
 	match a with
 	[] -> []
-	| h::t -> if (contains b h) then h::(set_intersection t b)
+	| h::t -> if (contains h b) then h::(set_intersection t b)
 		  else (set_intersection t b)
 
 (*Question 5*)
@@ -77,40 +77,42 @@ type ('nonterminal, 'terminal) symbol =
   | T of 'terminal
 
 (*check whether a non-terminal lhs maps to itself*)
-let rec is_terminal symbol =
+let rec symbol_is_valid symbol lst=
 	match symbol with
-	T symbol -> true
-	| _ -> false
+	T s -> true
+	| N s -> (contains s lst)
 (* rule = (lhs, expr) lhs = symbol; expr = [T'3; N'Num] *)
-let rec add_safe_symbols lhs rule list =
+let rec add_safe_symbols lhs rule lst =
 	match rule with
-	[] -> lhs::list
-	| h::t -> if (is_terminal h) then add_safe_symbols lhs t list
-		  else list
+	[] -> lhs::lst
+	| h::t -> if (symbol_is_valid h lst) then add_safe_symbols lhs t lst
+		  else lst
+let rec populate_list exprs lst =
+	match exprs with
+	[] -> lst
+	| (lhs, rule)::t -> populate_list t (add_safe_symbols lhs rule lst )
 
-let rec populate_list rules list =
-	match rules with
-	[] -> list
-	| rule::t -> populate_list t (add_safe_symbols (fst rule) (snd rule) list )
-(* list now contains all N that terminates *)
+let populate_list_helper (a, b) =
+	(a, populate_list a b)
 
-(* check whether symbol is in list of approved Ns*)
-let rec rule_is_safe rule list =
+(* list now contains all N that terminates*)
+let rec rule_is_safe rule lst =
 	match rule with
-	[] -> true 
-	| h::t -> if contains h list then rule_is_safe t list
+	[] -> true
+	| h::t -> if (symbol_is_valid h lst) then (rule_is_safe t lst)
 		  else false
- 
-let rec blind_alley_helper exprs list =
+
+let rec filter exprs lst =
 	match exprs with
 	[] -> []
-	| h::t-> if (rule_is_safe (snd h) list ) then ((fst h), (snd h))::(blind_alley_helper t list)
-		  else blind_alley_helper t list 
+	| h::t-> if (rule_is_safe (snd h) lst) then h::(filter t lst)
+		  else filter t lst 
+let equals_helper (a, b) (c, d) =
+	equal_sets b d
 
 let rec filter_blind_alleys g =
-	match g with
-	(k, v) -> let lhs_expr  = k in
-		  let rhs_exprs = v in
-	let safe_list = populate_list rhs_exprs [] in
-	let filtered = blind_alley_helper rhs_exprs safe_list in
+	let lhs_expr  = (fst g) in
+	let rhs_exprs = (snd g) in
+	let safe_list = (snd (computed_fixed_point equals_helper populate_list_helper (rhs_exprs, []))) in
+	let filtered = (filter rhs_exprs safe_list) in
 	(lhs_expr, filtered)
