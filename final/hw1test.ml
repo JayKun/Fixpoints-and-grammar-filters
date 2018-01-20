@@ -101,5 +101,5 @@ let test_rules1 =
 
 let g = Why, test_rules
 let g1 = Why, test_rules1
-let filter_blind_alleys_test0 = filter_blind_alleys g = g
-let filter_blind_alleys_test1 = filter_blind_alleys g1 = (Why, [(So, [T "+"]); (Tired, [T "0"])])
+let my_filter_blind_alleys_test0 = filter_blind_alleys g = g
+let my_filter_blind_alleys_test1 = filter_blind_alleys g1 = (Why, [(So, [T "+"]); (Tired, [T "0"])])
